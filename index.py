@@ -14,7 +14,6 @@ TOLERANCIA_MINUTOS = 12
 ZONA_CHILE = ZoneInfo("America/Santiago")
 ARCHIVO_HISTORIAL = "historial_presion_cuarta_zona.json"
 
-# Asegurar que el archivo de historial exista desde el inicio para evitar errores
 if not os.path.exists(ARCHIVO_HISTORIAL):
     try:
         with open(ARCHIVO_HISTORIAL, "w", encoding="utf-8") as f:
@@ -307,7 +306,7 @@ def generar_html(resultados_totales, hay_alerta):
         cuerpo_tarjeta = f"""
             <div class="card-body-content">
                 <div class="row-top">
-                    <div class="item-box temp-box">🌡️ {r['temp']}</div>
+                    <div class="item-box temp-box">🌡️️ {r['temp']}</div>
                     <div class="item-box">{viento_contenido}</div>
                     <div class="item-box"><span style="font-size: 0.58em; color: var(--wind-color, #1d4ed8); font-weight: 800; display: block; line-height: 1.1;">💨 RACHA</span><span style="font-size: 0.72em; font-weight: 700; line-height: 1.1;">{r['racha']}</span></div>
                 </div>
@@ -335,7 +334,7 @@ def generar_html(resultados_totales, hay_alerta):
         """
 
     alerta_class = "alerta-activa" if hay_alerta else ""
-    alerta_banner = '<div class="banner-alerta">⚠️ ¡ATENCIÓN: HAY ESTACIONES CON FALLAS O DESACTUALIZADAS! ⚠️️</div>' if hay_alerta else ""
+    alerta_banner = '<div class="banner-alerta">⚠️ ¡ATENCIÓN: HAY ESTACIONES CON FALLAS O DESACTUALIZADAS! ⚠</div>' if hay_alerta else ""
     hora_actual_chile = obtener_hora_chile().strftime("%d-%m-%Y %H:%M:%S")
 
     html = f"""<!DOCTYPE html>
@@ -344,7 +343,7 @@ def generar_html(resultados_totales, hay_alerta):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="30">
-    <title>Centro Zonal de Meteorología Marina de Iquique</title>
+    <title>Monitor de Estaciones Automáticas - Centro Zonal de Meteorología Marina de Iquique</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {{
@@ -563,8 +562,8 @@ def generar_html(resultados_totales, hay_alerta):
         <button class="icon-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Cambiar Modo Oscuro/Claro">🌙</button>
         <button class="icon-btn wind-unit-btn" onclick="toggleWindUnit()" id="windUnitBtn" title="Cambiar Unidad de Viento">kt</button>
     </div>
-    <h1>Centro Zonal de Meteorología Marina</h1>
-    <div class="subtitle-line2">Iquique</div>
+    <h1>Monitor de Estaciones Automáticas</h1>
+    <div class="subtitle-line2">Centro Zonal de Meteorología Marina de Iquique</div>
     <div class="subtitle">Última verificación: {hora_actual_chile} (Tolerancia: {TOLERANCIA_MINUTOS} min)</div>
     {alerta_banner}
     <div class="summary">Estaciones Operativas: {operativas} de {total_estaciones}</div>
@@ -642,7 +641,7 @@ def generar_html(resultados_totales, hay_alerta):
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("✓ index.html actualizado: Ahora muestra 'Centro Zonal de Meteorología Marina de Iquique'.")
+    print("✓ index.html actualizado con el título y subtítulo correctos.")
 
 def ejecutar_monitoreo():
     print(f"\n--- [{obtener_hora_chile().strftime('%H:%M:%S')}] Verificando estaciones del Centro Zonal de Meteorología Marina de Iquique ---")
@@ -676,7 +675,7 @@ def subir_a_github():
             print("No hay cambios nuevos para registrar en Git.")
             return
 
-        subprocess.run(["git", "commit", "-m", "Actualizacion titulo a Centro Zonal de Meteorologia Marina de Iquique [skip ci]"], check=True)
+        subprocess.run(["git", "commit", "-m", "Actualizacion estructura de titulo a Centro Zonal de Iquique [skip ci]"], check=True)
         subprocess.run(["git", "push"], check=True)
         print("✓ Sincronización completada con éxito.")
     except subprocess.CalledProcessError as e:
