@@ -14,6 +14,14 @@ TOLERANCIA_MINUTOS = 12
 ZONA_CHILE = ZoneInfo("America/Santiago")
 ARCHIVO_HISTORIAL = "historial_presion_cuarta_zona.json"
 
+# Asegurar que el archivo de historial exista desde el inicio para evitar errores
+if not os.path.exists(ARCHIVO_HISTORIAL):
+    try:
+        with open(ARCHIVO_HISTORIAL, "w", encoding="utf-8") as f:
+            json.dump({}, f)
+    except Exception:
+        pass
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
@@ -136,7 +144,8 @@ def gestionar_historial_presion(nombre_estacion, presion_actual):
         historial[nombre_estacion] = []
 
     registros = historial[nombre_estacion]
-    registros.append({"t": ahora.timestamp(), "p": presion_actual})
+    if presion_actual is not None:
+        registros.append({"t": ahora.timestamp(), "p": presion_actual})
 
     limite_tiempo = ahora.timestamp() - (3.5 * 3600)
     registros = [r for r in registros if r["t"] >= limite_tiempo]
@@ -657,12 +666,19 @@ def ejecutar_monitoreo():
 def subir_a_github():
     try:
         print("Sincronizando cambios con GitHub...")
+        subprocess.run(["git", "config", "--global", "user.name", "GitHub Actions Bot"], check=True)
+        subprocess.run(["git", "config", "--global", "user.email", "actions@github.com"], check=True)
+        
+        # Agregamos tanto el index.html como el archivo json del historial de la cuarta zona
         subprocess.run(["git", "add", "index.html", ARCHIVO_HISTORIAL], check=True)
-        resultado = subprocess.run(["git", "commit", "-m", "Actualizacion estaciones Cuarta Zona Naval [skip ci]"], capture_output=True, text=True)
-        if resultado.returncode != 0:
-            if "nothing to commit" in (resultado.stdout + resultado.stderr).lower():
-                print("Sin cambios nuevos para subir.")
-                return
+        
+        # Usamos git diff para verificar si hay cambios reales antes de hacer commit
+        resultado_diff = subprocess.run(["git", "diff", "--cached", "--quiet"])
+        if resultado_diff.returncode == 0:
+            print("No hay cambios nuevos para registrar en Git.")
+            return
+
+        subprocess.run(["git", "commit", "-m", "Actualizacion estaciones y presiones Cuarta Zona Naval [skip ci]"], check=True)
         subprocess.run(["git", "push"], check=True)
         print("✓ Sincronización completada con éxito.")
     except subprocess.CalledProcessError as e:
