@@ -35,7 +35,7 @@ ctx.check_hostname = False
 ctx.verify_mode = ssl.CERT_NONE
 
 # ==========================================
-# ESTACIONES CUARTA ZONA NAVAL
+# ESTACIONES METEOROLÓGICAS
 # ==========================================
 ESTACIONES_CUARTA_ZONA = [
     {
@@ -335,7 +335,7 @@ def generar_html(resultados_totales, hay_alerta):
         """
 
     alerta_class = "alerta-activa" if hay_alerta else ""
-    alerta_banner = '<div class="banner-alerta">⚠️ ¡ATENCIÓN: HAY ESTACIONES CON FALLAS O DESACTUALIZADAS! ⚠️</div>' if hay_alerta else ""
+    alerta_banner = '<div class="banner-alerta">⚠️ ¡ATENCIÓN: HAY ESTACIONES CON FALLAS O DESACTUALIZADAS! ⚠️️</div>' if hay_alerta else ""
     hora_actual_chile = obtener_hora_chile().strftime("%d-%m-%Y %H:%M:%S")
 
     html = f"""<!DOCTYPE html>
@@ -344,7 +344,7 @@ def generar_html(resultados_totales, hay_alerta):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="refresh" content="30">
-    <title>Monitor de Estaciones Automáticas - Cuarta Zona Naval</title>
+    <title>Centro Zonal de Meteorología Marina de Iquique</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         :root {{
@@ -394,8 +394,8 @@ def generar_html(resultados_totales, hay_alerta):
         }}
 
         body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--bg-color); color: var(--text-color); padding: 15px; margin: 0; transition: background-color 0.3s ease, color 0.3s ease; }}
-        h1 {{ text-align: center; color: var(--h1-color); margin-bottom: 0; font-size: 22px; line-height: 1.2; font-weight: 700; }}
-        .subtitle-line2 {{ text-align: center; color: var(--sub2-color); margin-bottom: 6px; font-size: 16px; font-weight: bold; }}
+        h1 {{ text-align: center; color: var(--h1-color); margin-bottom: 2px; font-size: 20px; line-height: 1.2; font-weight: 700; }}
+        .subtitle-line2 {{ text-align: center; color: var(--sub2-color); margin-bottom: 6px; font-size: 14px; font-weight: bold; }}
         .subtitle {{ text-align: center; color: var(--sub-color); margin-bottom: 12px; font-size: 12px; }}
         .summary {{ text-align: center; font-weight: bold; margin-bottom: 15px; color: var(--summary-text); font-size: 14px; background: var(--summary-bg); padding: 6px 16px; border-radius: 20px; max-width: 280px; margin-left: auto; margin-right: auto; box-shadow: 0 2px 6px rgba(0,0,0,0.06); border: 1px solid var(--summary-border); }}
         
@@ -541,7 +541,7 @@ def generar_html(resultados_totales, hay_alerta):
         @media (max-width: 600px) {{
             h1 {{
                 padding-right: 45px;
-                font-size: 19px;
+                font-size: 17px;
             }}
             .floating-controls {{
                 top: 8px;
@@ -563,8 +563,8 @@ def generar_html(resultados_totales, hay_alerta):
         <button class="icon-btn" onclick="toggleDarkMode()" id="darkModeBtn" title="Cambiar Modo Oscuro/Claro">🌙</button>
         <button class="icon-btn wind-unit-btn" onclick="toggleWindUnit()" id="windUnitBtn" title="Cambiar Unidad de Viento">kt</button>
     </div>
-    <h1>Monitor de Estaciones Automáticas</h1>
-    <div class="subtitle-line2">Cuarta Zona Naval</div>
+    <h1>Centro Zonal de Meteorología Marina</h1>
+    <div class="subtitle-line2">Iquique</div>
     <div class="subtitle">Última verificación: {hora_actual_chile} (Tolerancia: {TOLERANCIA_MINUTOS} min)</div>
     {alerta_banner}
     <div class="summary">Estaciones Operativas: {operativas} de {total_estaciones}</div>
@@ -586,7 +586,7 @@ def generar_html(resultados_totales, hay_alerta):
         function toggleDarkMode() {{
             document.body.classList.toggle('dark-mode');
             const isDark = document.body.classList.contains('dark-mode');
-            localStorage.setItem('darkModeCuartaZona', isDark ? 'enabled' : 'disabled');
+            localStorage.setItem('darkModeMetIquique', isDark ? 'enabled' : 'disabled');
             updateButtonText(isDark);
         }}
 
@@ -595,7 +595,7 @@ def generar_html(resultados_totales, hay_alerta):
             if (btn) btn.innerHTML = isDark ? '☀️' : '🌙';
         }}
 
-        if (localStorage.getItem('darkModeCuartaZona') === 'enabled') {{
+        if (localStorage.getItem('darkModeMetIquique') === 'enabled') {{
             document.body.classList.add('dark-mode');
             updateButtonText(true);
         }}
@@ -604,7 +604,7 @@ def generar_html(resultados_totales, hay_alerta):
 
         function toggleWindUnit() {{
             windInKnots = !windInKnots;
-            localStorage.setItem('windUnitCuartaZona', windInKnots ? 'kt' : 'khr');
+            localStorage.setItem('windUnitMetIquique', windInKnots ? 'kt' : 'khr');
             updateWindDisplay();
         }}
 
@@ -632,7 +632,7 @@ def generar_html(resultados_totales, hay_alerta):
             }});
         }}
 
-        if (localStorage.getItem('windUnitCuartaZona') === 'khr') {{
+        if (localStorage.getItem('windUnitMetIquique') === 'khr') {{
             windInKnots = false;
             setTimeout(updateWindDisplay, 100);
         }}
@@ -642,10 +642,10 @@ def generar_html(resultados_totales, hay_alerta):
 
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-    print("✓ index.html de la Cuarta Zona Naval actualizado correctamente.")
+    print("✓ index.html actualizado: Ahora muestra 'Centro Zonal de Meteorología Marina de Iquique'.")
 
 def ejecutar_monitoreo():
-    print(f"\n--- [{obtener_hora_chile().strftime('%H:%M:%S')}] Verificando estaciones de la Cuarta Zona Naval ---")
+    print(f"\n--- [{obtener_hora_chile().strftime('%H:%M:%S')}] Verificando estaciones del Centro Zonal de Meteorología Marina de Iquique ---")
     resultados_dict = {}
     hubo_fallas = False
 
@@ -669,16 +669,14 @@ def subir_a_github():
         subprocess.run(["git", "config", "--global", "user.name", "GitHub Actions Bot"], check=True)
         subprocess.run(["git", "config", "--global", "user.email", "actions@github.com"], check=True)
         
-        # Agregamos tanto el index.html como el archivo json del historial de la cuarta zona
         subprocess.run(["git", "add", "index.html", ARCHIVO_HISTORIAL], check=True)
         
-        # Usamos git diff para verificar si hay cambios reales antes de hacer commit
         resultado_diff = subprocess.run(["git", "diff", "--cached", "--quiet"])
         if resultado_diff.returncode == 0:
             print("No hay cambios nuevos para registrar en Git.")
             return
 
-        subprocess.run(["git", "commit", "-m", "Actualizacion estaciones y presiones Cuarta Zona Naval [skip ci]"], check=True)
+        subprocess.run(["git", "commit", "-m", "Actualizacion titulo a Centro Zonal de Meteorologia Marina de Iquique [skip ci]"], check=True)
         subprocess.run(["git", "push"], check=True)
         print("✓ Sincronización completada con éxito.")
     except subprocess.CalledProcessError as e:
